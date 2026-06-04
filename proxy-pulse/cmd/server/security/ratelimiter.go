@@ -45,17 +45,3 @@ func (rl *RateLimiter) Allow(ip string) bool {
 	b, _ := rl.buckets.LoadOrStore(ip, newTokenBucket(rl.limit, rl.window))
 	return b.(*tokenBucket).Allow()
 }
-
-func (rl *RateLimiter) rateLimiterCleanup(interval int) {
-	ticker := time.NewTicker(time.Duration(interval) * time.Second)
-	defer ticker.Stop()
-	for range ticker.C {
-		rl.buckets.Range(func(k, v any) bool {
-			tb := v.(*tokenBucket)
-			if time.Since(tb.lastRefill) > 2*time.Hour {
-				rl.buckets.Delete(k)
-			}
-			return true
-		})
-	}
-}

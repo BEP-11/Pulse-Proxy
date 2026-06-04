@@ -7,24 +7,22 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Security SecurityConfig
-	Metrics  MetricsConfig
+	Server   ServerConfig   `mapstructure:"server"`
+	Security SecurityConfig `mapstructure:"security"`
+	Metrics  MetricsConfig  `mapstructure:"metrics"`
 }
 
 type ServerConfig struct {
-	Listen string
-	Port   int
-	SNI    string
+	Listen string `mapstructure:"listen"`
+	Port   int    `mapstructure:"port"`
 }
 
 type SecurityConfig struct {
-	RateLimitQPS float64
-	BlockSubnets []string
+	RateLimitQPS float64 `mapstructure:"rate_limit_qps"`
 }
 
 type MetricsConfig struct {
-	Addr string
+	Addr string `mapstructure:"addr"`
 }
 
 func Load(path string) (*Config, error) {
@@ -32,11 +30,9 @@ func Load(path string) (*Config, error) {
 	if path != "" {
 		v.SetConfigFile(path)
 	} else {
-		v.SetConfigType("yaml")
 		v.SetDefault("server.listen", "0.0.0.0")
-		v.SetDefault("server.port", 443)
-		v.SetDefault("server.sni", "")
-		v.SetDefault("security.rate_limit_qps", 100)
+		v.SetDefault("server.port", 8443)
+		v.SetDefault("security.rate_limit_qps", 50)
 		v.SetDefault("metrics.addr", ":9090")
 	}
 
