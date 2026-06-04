@@ -1,0 +1,35 @@
+# config.advanced.yaml
+server:
+  listen: "0.0.0.0"
+  port: 443
+  mode: https
+tls:
+  manual_cert: true
+  cert_path: "/etc/letsencrypt/live/proxy.yourdomain.com/fullchain.pem"
+  key_path: "/etc/letsencrypt/live/proxy.yourdomain.com/privkey.pem"
+security:
+  rate_limit_qps: 30
+  token_secret_env: "PROXY_TOKEN_SECRET"
+  block_countries: ["RU", "CN", "KP"]   # GeoIP (требует geoip2lib)
+  block_ips_file: "/etc/proxy-pulse/blacklist.txt"
+routing:
+  dns_resolve: "system"          # system | doh | dot
+  doh_url: "https://cloudflare-dns.com/dns-query"
+  load_balancing:
+    algorithm: "weighted-round-robin"
+    health_check_path: "/health"
+    failure_threshold: 3
+  domains:
+    - pattern: "*.cdn.cloudflare.net"
+      upstream: "104.18.0.1:443"
+      policy: "direct"
+    - pattern: "*"
+      upstream: "proxy.upstream.tld:443"
+      policy: "tunnel"
+client_export:
+  clash_meta_format: true        # автоматически генерирует Clash/Sing-Box конфиг при запуске
+  filename: "/etc/proxy-pulse/clash.yaml"
+logging:
+  level: "warn"
+  format: "json"
+  access_log: true

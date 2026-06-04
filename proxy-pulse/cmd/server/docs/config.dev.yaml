@@ -1,0 +1,17 @@
+# config.dev.yaml
+server:
+  listen: "0.0.0.0"
+  port: 8443
+  mode: tcp          # tcp | https | socks5
+security:
+  rate_limit_qps: 100
+  token_secret: ""   # пусто = отключено (для теста)
+metrics:
+  addr: ":9090"
+  enable_pprof: true
+logging:
+  level: "debug"
+  format: "json"     # text | json | logfmt
+tunnel:
+  default_upstream: "1.1.1.1:443"
+  timeout_sec: 5

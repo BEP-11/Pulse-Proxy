@@ -1,8 +1,35 @@
+# config.prod.yaml
 server:
   listen: "0.0.0.0"
   port: 443
-  sni: "yourdomain.com" # пустой для self-signed / локального TLS
+  mode: https
+  sni: "proxy.yourdomain.com"
+tls:
+  acme: true
+  email: "admin@yourdomain.com"
+  storage_path: "/var/lib/proxy-pulse/acme"
+  cache_duration_hours: 720
 security:
-  rate_limit_qps: 100
+  rate_limit_qps: 50
+  rate_window_sec: 60
+  token_secret_env: "PROXY_TOKEN_SECRET"
+  allow_cidr: ["10.0.0.0/8", "172.16.0.0/12"] # белый список IP (пусто = всем)
+upstream:
+  strategy: "round-robin"
+  health_check_interval_sec: 30
+  targets:
+    - addr: "cloudflare-dns.com:443"
+      weight: 80
+      tls_verify: true
+    - addr: "dns.google:443"
+      weight: 20
 metrics:
-  addr: ":9090"
+  addr: ":9100"
+  enable_basic_auth: true
+  username: "monitor"
+  password_env: "GRAFANA_PROM_PASS"
+logging:
+  level: "info"
+  format: "logfmt"
+  file_path: "/var/log/proxy-pulse.log"
+
