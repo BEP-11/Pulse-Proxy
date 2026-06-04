@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  proxy:
+    build: ..
+    ports: ["443:443", "9090:9090"]
+    volumes: ["./config.yaml:/examples/config.yaml:ro"]
+    restart: unless-stopped
+  dashboard:
+    image: nginx:alpine
+    ports: ["8080:80"]
+    volumes: ["../web/dashboard:/usr/share/nginx/html:ro"]
+    restart: unless-stopped

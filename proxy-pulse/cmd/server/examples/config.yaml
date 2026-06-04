@@ -1,0 +1,8 @@
+server:
+  listen: "0.0.0.0"
+  port: 443
+  sni: "yourdomain.com" # пустой для self-signed / локального TLS
+security:
+  rate_limit_qps: 100
+metrics:
+  addr: ":9090"
